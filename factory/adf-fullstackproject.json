@@ -1,0 +1,9 @@
+{
+	"name": "adf-fullstackproject",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "a6acc027-dd14-47c6-8fb2-011977f8f47b",
+		"tenantId": "2800c0a0-70e9-49be-8733-faeaa6aced99"
+	}
+}

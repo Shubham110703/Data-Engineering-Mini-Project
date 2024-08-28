@@ -1,0 +1,17 @@
+{
+	"name": "DB_fullstackproject",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "sqlservers01.database.windows.net",
+			"database": "DB_fullstackdata",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "testuser",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDZGQjYzMDVFLTNEOEQtNDI5MS05RTExLTE4MkY0OTU2QzU5NF8wMzVlNGU0ZC02Yjg4LTQ5NjAtYTdhZS1jOTVmYWJhY2QzZTIiDQp9"
+		}
+	}
+}
