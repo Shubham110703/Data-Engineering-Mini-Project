@@ -15,31 +15,8 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "MongoDbAtlasSource",
-						"batchSize": 100
-					},
-					"sink": {
-						"type": "AzureSqlSink",
-						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false,
-						"tableOption": "autoCreate",
-						"disableMetricsCollection": false
-					},
 					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "MDB_fullstackUserData",
-						"type": "DatasetReference"
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "SQL_DB_fullstackUser",
-						"type": "DatasetReference"
-					}
-				]
+				}
 			},
 			{
 				"name": "RoleSkillsData",
@@ -67,12 +44,6 @@
 					},
 					"enableStaging": false
 				},
-				"inputs": [
-					{
-						"referenceName": "MDB_fullstackRoleSkillsData",
-						"type": "DatasetReference"
-					}
-				],
 				"outputs": [
 					{
 						"referenceName": "SQL_DB_fullStackRoleSkills",

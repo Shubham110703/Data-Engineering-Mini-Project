@@ -1,0 +1,22 @@
+{
+	"name": "ABS_fullStackUser",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ABS_fullStackProject",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "full-stack-user-input"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
