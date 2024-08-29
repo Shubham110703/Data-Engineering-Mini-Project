@@ -75,6 +75,7 @@
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
+							"wildcardFileName": "RoleSkill.csv",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {

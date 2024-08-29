@@ -5,14 +5,52 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "SQL_DB_UserTable",
+						"type": "DatasetReference"
+					},
 					"name": "source1"
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1"
+				"source(output(",
+				"          {_id} as string,",
+				"          username as string,",
+				"          email as string,",
+				"          password as string,",
+				"          gender as string,",
+				"          position as string,",
+				"          workExp as string,",
+				"          tags as string,",
+				"          role as string,",
+				"          skills as string,",
+				"          image as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 derive(username = iifNull(username, 'NA'),",
+				"          email = iifNull(email , 'NA'),",
+				"          password = iifNull(password, 'Invalid'),",
+				"          gender = iifNull(gender, 'NA'),",
+				"          position = iifNull(position, 'NA'),",
+				"          workExp = iifNull(workExp, '0'),",
+				"          tags = iifNull(tags, '-'),",
+				"          role = iifNull(role, 'NA'),",
+				"          skills = iifNull(skills, 'NA'),",
+				"          image = iifNull(image, 'Alt image')) ~> derivedColumn1"
 			]
 		}
 	}
