@@ -1,0 +1,19 @@
+{
+	"name": "MongoToBlobJson",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ABS_fullStackProject",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "MongoToJson",
+				"container": "output"
+			}
+		},
+		"schema": {}
+	}
+}
