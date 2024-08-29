@@ -10,15 +10,58 @@
 						"type": "DatasetReference"
 					},
 					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "SQL_DB_UserTable",
+						"type": "DatasetReference"
+					},
+					"name": "User"
+				},
+				{
+					"dataset": {
+						"referenceName": "SQL_DB_fullStackRoleSkills",
+						"type": "DatasetReference"
+					},
+					"name": "Role"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SQL_DB_FinalTable",
+						"type": "DatasetReference"
+					},
+					"name": "StoreCleanData",
+					"description": "Shows which User has which Skills based on that role"
+				},
+				{
+					"dataset": {
+						"referenceName": "SQL_DB_CleanUserTable",
+						"type": "DatasetReference"
+					},
+					"name": "CleanUser",
+					"description": "Store Clean User in DB"
+				}
+			],
 			"transformations": [
 				{
 					"name": "select1"
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -39,18 +82,103 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> source1",
-				"source1 select(skipDuplicateMapInputs: true,",
+				"source(output(",
+				"          {_id} as string,",
+				"          username as string,",
+				"          email as string,",
+				"          password as string,",
+				"          gender as string,",
+				"          position as string,",
+				"          workExp as string,",
+				"          tags as string,",
+				"          role as string,",
+				"          skills as string,",
+				"          image as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> User",
+				"source(output(",
+				"          role as string,",
+				"          image as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Role",
+				"source1 select(mapColumn(",
+				"          {_id},",
+				"          username,",
+				"          email,",
+				"          gender,",
+				"          workExp,",
+				"          tags,",
+				"          role,",
+				"          skills,",
+				"          image",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"select1 derive(username = iifNull(username, 'NA'),",
 				"          email = iifNull(email , 'NA'),",
-				"          password = iifNull(password, 'Invalid'),",
 				"          gender = iifNull(gender, 'NA'),",
-				"          position = iifNull(position, 'NA'),",
 				"          workExp = iifNull(workExp, '0'),",
 				"          tags = iifNull(tags, '-'),",
 				"          role = iifNull(role, 'NA'),",
 				"          skills = iifNull(skills, 'NA'),",
-				"          image = iifNull(image, 'Alt image')) ~> derivedColumn1"
+				"          image = iifNull(image, 'Image')) ~> derivedColumn1",
+				"User, Role join(User@role == Role@role,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          {_id},",
+				"          username,",
+				"          email,",
+				"          workExp,",
+				"          tags,",
+				"          role = User@role,",
+				"          skills",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 aggregate(groupBy({_id},",
+				"          username,",
+				"          email,",
+				"          workExp,",
+				"          role,",
+				"          skills),",
+				"     tags = max(tags)) ~> aggregate1",
+				"aggregate1 derive(username = iifNull(username, 'NA'),",
+				"          email = iifNull(email, 'NA'),",
+				"          workExp = iifNull(workExp, '0'),",
+				"          role = iifNull(role, 'NA'),",
+				"          skills = iifNull(skills, 'NA'),",
+				"          tags = iifNull(tags, '-')) ~> derivedColumn2",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> StoreCleanData",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> CleanUser"
 			]
 		}
 	}

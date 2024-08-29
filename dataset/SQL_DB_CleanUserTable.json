@@ -1,0 +1,16 @@
+{
+	"name": "SQL_DB_CleanUserTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DB_fullstackproject",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "clean",
+			"table": "UserTable"
+		}
+	}
+}
