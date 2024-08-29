@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "adf-fullstackproject"
 		},
+		"ABS_fullStackProject_connectionString": {
+			"value": ""
+		},
 		"DB_fullstackproject_password": {
 			"value": ""
 		},

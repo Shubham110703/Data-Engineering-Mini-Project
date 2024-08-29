@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adf-fullstackproject"
 		},
+		"ABS_fullStackProject_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ABS_fullStackProject'"
+		},
 		"DB_fullstackproject_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'DB_fullstackproject'"
@@ -57,6 +61,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"ABS_fullStackProject_connectionString": {
+						"value": "[parameters('ABS_fullStackProject_connectionString')]"
 					},
 					"DB_fullstackproject_password": {
 						"value": "[parameters('DB_fullstackproject_password')]"
