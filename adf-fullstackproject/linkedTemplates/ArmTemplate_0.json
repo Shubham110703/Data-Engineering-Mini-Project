@@ -91,47 +91,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/MDB_fullstackRoleSkillsData')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MDA_fullstackproject",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "MongoDbAtlasCollection",
-				"schema": [],
-				"typeProperties": {
-					"collection": "roleskills"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MDA_fullstackproject')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MDB_fullstackUserData')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MDA_fullstackproject",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "MongoDbAtlasCollection",
-				"schema": [],
-				"typeProperties": {
-					"collection": "users"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MDA_fullstackproject')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MongoToBlobJson')]",
+			"name": "[concat(parameters('factoryName'), '/ABS_DataEng_productCSV')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -140,18 +100,231 @@
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "Json",
+				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"folderPath": "MongoToJson",
-						"container": "output"
-					}
+						"fileName": "Product.csv",
+						"container": "data-eng-input"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
-				"schema": {}
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ABS_fullStackProject')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ABS_DataEng_productItemCSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ABS_fullStackProject",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "ProductItem.csv",
+						"container": "data-eng-input"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ABS_fullStackProject')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ABS_fullStackUser')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ABS_fullStackProject",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "full-stack-user-input"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ABS_fullStackProject')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ABS_fullstackRoleSkills')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ABS_fullStackProject",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "RoleSkill.csv",
+						"container": "full-stack-user-input"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ABS_fullStackProject')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_DB_CleanUserTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DB_fullstackproject",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "clean",
+					"table": "UserTable"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DB_fullstackproject')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_DB_FinalTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DB_fullstackproject",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "final",
+					"table": "UserSkills"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DB_fullstackproject')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_DB_ProductDetail')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DB_fullstackproject",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "clean",
+					"table": "ProductDetail"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DB_fullstackproject')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_DB_ProductItem')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DB_fullstackproject",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "clean",
+					"table": "ProductItem"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DB_fullstackproject')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_DB_UserTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DB_fullstackproject",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "raw",
+					"table": "User"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DB_fullstackproject')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_DB_finalProdTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DB_fullstackproject",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "Final",
+					"table": "Product"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DB_fullstackproject')]"
 			]
 		},
 		{
@@ -185,35 +358,423 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_DB_fullstackUser')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/DF_DataEng')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DB_fullstackproject",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
+				"type": "MappingDataFlow",
 				"typeProperties": {
-					"schema": "raw",
-					"table": "User"
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ABS_DataEng_productCSV",
+								"type": "DatasetReference"
+							},
+							"name": "MisumiProductDetail"
+						},
+						{
+							"dataset": {
+								"referenceName": "ABS_DataEng_productItemCSV",
+								"type": "DatasetReference"
+							},
+							"name": "ProductItem"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQL_DB_ProductDetail",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQL_DB_ProductItem",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "SQL_DB_ProductDetail",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQL_DB_ProductItem",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQL_DB_finalProdTable",
+								"type": "DatasetReference"
+							},
+							"name": "sink3"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "select2"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "select3"
+						},
+						{
+							"name": "derivedColumn4"
+						},
+						{
+							"name": "aggregate1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          {Main Product Category} as string,",
+						"          {Sub Category} as string,",
+						"          {Sub-Sub Category} as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> MisumiProductDetail",
+						"source(output(",
+						"          {Category Name} as string,",
+						"          {Category Code} as string,",
+						"          {Series Name} as string,",
+						"          {Brand Name} as string,",
+						"          {Min Days To Ship} as short,",
+						"          {Max Days To Ship} as short,",
+						"          Description as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> ProductItem",
+						"source(output(",
+						"          {Main Product Category} as string,",
+						"          {Sub Category} as string,",
+						"          {Sub-Sub Category} as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> source2",
+						"source(output(",
+						"          {Category Name} as string,",
+						"          {Category Code} as string,",
+						"          {Series Name} as string,",
+						"          {Brand Name} as string,",
+						"          {Min Days To Ship} as short,",
+						"          {Max Days To Ship} as short,",
+						"          Description as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> source1",
+						"MisumiProductDetail select(skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"ProductItem select(skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select2",
+						"select1 derive({Main Product Category} = iifNull({Main Product Category}, \"NA\"),",
+						"          {Sub Category} = iifNull({Sub Category}, \"NA\"),",
+						"          {Sub-Sub Category} = iifNull({Sub-Sub Category}, \"NA\")) ~> derivedColumn1",
+						"derivedColumn1 filter({Sub Category} != \"NA\" && {Sub-Sub Category} != \"NA\") ~> filter1",
+						"select2 derive(Description = regexReplace(regexReplace(Description, '<[^>]+>', ''), '[€¢]', ''),",
+						"          {Category Name} = iifNull({Category Name}, \"NA\"),",
+						"          {Category Code} = iifNull({Category Code}, \"NA\"),",
+						"          {Series Name} = iifNull({Series Name}, \"NA\"),",
+						"          {Brand Name} = iifNull({Brand Name}, \"NA\")) ~> derivedColumn2",
+						"source2, source1 join({Sub-Sub Category} == {Category Name},",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"derivedColumn4 select(mapColumn(",
+						"          {Main Product Category},",
+						"          {Sub Category},",
+						"          {Category Name},",
+						"          BrandName = {Brand Name},",
+						"          {Series Name},",
+						"          Description,",
+						"          AverageDaysToShip",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select3",
+						"join1 derive(AverageDaysToShip = ({Min Days To Ship}+{Max Days To Ship})/2,",
+						"          {Category Name} = iifNull({Category Name}, \"NA\"),",
+						"          {Sub Category} = iifNull({Sub Category}, \"NA\"),",
+						"          {Series Name} = iifNull({Series Name}, \"NA\"),",
+						"          {Brand Name} = iifNull({Brand Name}, \"NA\"),",
+						"          Description = iifNull({Description}, \"NA\")) ~> derivedColumn4",
+						"select3 aggregate(groupBy({Main Product Category},",
+						"          {Sub Category},",
+						"          {Category Name},",
+						"          BrandName,",
+						"          {Series Name},",
+						"          Description,",
+						"          AverageDaysToShip),",
+						"     Count = count({Main Product Category})) ~> aggregate1",
+						"filter1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
+						"derivedColumn2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink2",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink3"
+					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DB_fullstackproject')]"
+				"[concat(variables('factoryId'), '/datasets/ABS_DataEng_productCSV')]",
+				"[concat(variables('factoryId'), '/datasets/ABS_DataEng_productItemCSV')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_DB_ProductDetail')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_DB_ProductItem')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_DB_finalProdTable')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_fullstackProject')]",
+			"name": "[concat(parameters('factoryName'), '/DF_fullStack')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "SQL_DB_UserTable",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQL_DB_UserTable",
+								"type": "DatasetReference"
+							},
+							"name": "User"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQL_DB_fullStackRoleSkills",
+								"type": "DatasetReference"
+							},
+							"name": "Role"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "SQL_DB_FinalTable",
+								"type": "DatasetReference"
+							},
+							"name": "StoreCleanData",
+							"description": "Shows which User has which Skills based on that role"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQL_DB_CleanUserTable",
+								"type": "DatasetReference"
+							},
+							"name": "CleanUser",
+							"description": "Store Clean User in DB"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "select2"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "derivedColumn2"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          {_id} as string,",
+						"          username as string,",
+						"          email as string,",
+						"          password as string,",
+						"          gender as string,",
+						"          position as string,",
+						"          workExp as string,",
+						"          tags as string,",
+						"          role as string,",
+						"          skills as string,",
+						"          image as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> source1",
+						"source(output(",
+						"          {_id} as string,",
+						"          username as string,",
+						"          email as string,",
+						"          password as string,",
+						"          gender as string,",
+						"          position as string,",
+						"          workExp as string,",
+						"          tags as string,",
+						"          role as string,",
+						"          skills as string,",
+						"          image as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> User",
+						"source(output(",
+						"          role as string,",
+						"          image as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> Role",
+						"source1 select(mapColumn(",
+						"          {_id},",
+						"          username,",
+						"          email,",
+						"          gender,",
+						"          workExp,",
+						"          tags,",
+						"          role,",
+						"          skills,",
+						"          image",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 derive(username = iifNull(username, 'NA'),",
+						"          email = iifNull(email , 'NA'),",
+						"          gender = iifNull(gender, 'NA'),",
+						"          workExp = iifNull(workExp, '0'),",
+						"          tags = iifNull(tags, '-'),",
+						"          role = iifNull(role, 'NA'),",
+						"          skills = iifNull(skills, 'NA'),",
+						"          image = iifNull(image, 'Image')) ~> derivedColumn1",
+						"User, Role join(User@role == Role@role,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 select(mapColumn(",
+						"          {_id},",
+						"          username,",
+						"          email,",
+						"          workExp,",
+						"          tags,",
+						"          role = User@role,",
+						"          skills",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select2",
+						"select2 aggregate(groupBy({_id},",
+						"          username,",
+						"          email,",
+						"          workExp,",
+						"          role,",
+						"          skills),",
+						"     tags = max(tags)) ~> aggregate1",
+						"aggregate1 derive(username = iifNull(username, 'NA'),",
+						"          email = iifNull(email, 'NA'),",
+						"          workExp = iifNull(workExp, '0'),",
+						"          role = iifNull(role, 'NA'),",
+						"          skills = iifNull(skills, 'NA'),",
+						"          tags = iifNull(tags, '-')) ~> derivedColumn2",
+						"derivedColumn2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     recreate:true,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> StoreCleanData",
+						"derivedColumn1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     recreate:true,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> CleanUser"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SQL_DB_UserTable')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_DB_fullStackRoleSkills')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_DB_FinalTable')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_DB_CleanUserTable')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_DataEng')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "UserData",
-						"type": "Copy",
+						"name": "Transformation",
+						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -224,74 +785,27 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"source": {
-								"type": "MongoDbAtlasSource",
-								"batchSize": 100
+							"dataflow": {
+								"referenceName": "DF_DataEng",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"MisumiProductDetail": {},
+									"ProductItem": {},
+									"source2": {},
+									"source1": {},
+									"sink1": {},
+									"sink2": {},
+									"sink3": {}
+								}
 							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false,
-								"tableOption": "autoCreate",
-								"disableMetricsCollection": false
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
 							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "MDB_fullstackUserData",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "SQL_DB_fullstackUser",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "RoleSkillsData",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "MongoDbAtlasSource",
-								"batchSize": 100
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false,
-								"tableOption": "autoCreate",
-								"disableMetricsCollection": false
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "MDB_fullstackRoleSkillsData",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "SQL_DB_fullStackRoleSkills",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -300,20 +814,17 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/MDB_fullstackUserData')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_DB_fullstackUser')]",
-				"[concat(variables('factoryId'), '/datasets/MDB_fullstackRoleSkillsData')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_DB_fullStackRoleSkills')]"
+				"[concat(variables('factoryId'), '/dataflows/DF_DataEng')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_testToArrayCheck')]",
+			"name": "[concat(parameters('factoryName'), '/PL_FullStackProject_data')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Mongo To JSON",
+						"name": "User Table",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -326,42 +837,55 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "MongoDbAtlasSource",
-								"batchSize": 100
-							},
-							"sink": {
-								"type": "JsonSink",
+								"type": "DelimitedTextSource",
 								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings",
-									"copyBehavior": "PreserveHierarchy"
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFileName": "User.csv",
+									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
-									"type": "JsonWriteSettings"
+									"type": "DelimitedTextReadSettings"
 								}
 							},
-							"enableStaging": false
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
 						},
 						"inputs": [
 							{
-								"referenceName": "MDB_fullstackRoleSkillsData",
+								"referenceName": "ABS_fullStackUser",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "MongoToBlobJson",
+								"referenceName": "SQL_DB_UserTable",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						]
 					},
 					{
-						"name": "JSON To SQL",
+						"name": "RoleSkillsTable",
 						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "Mongo To JSON",
+								"activity": "User Table",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -377,15 +901,15 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "JsonSource",
+								"type": "DelimitedTextSource",
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
 									"recursive": true,
-									"wildcardFileName": "*.json",
+									"wildcardFileName": "RoleSkill.csv",
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
-									"type": "JsonReadSettings"
+									"type": "DelimitedTextReadSettings"
 								}
 							},
 							"sink": {
@@ -395,11 +919,19 @@
 								"tableOption": "autoCreate",
 								"disableMetricsCollection": false
 							},
-							"enableStaging": false
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
 						},
 						"inputs": [
 							{
-								"referenceName": "MongoToBlobJson",
+								"referenceName": "ABS_fullstackRoleSkills",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -411,6 +943,46 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Transformation",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "RoleSkillsTable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DF_fullStack",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"User": {},
+									"Role": {},
+									"StoreCleanData": {},
+									"CleanUser": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -419,9 +991,11 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/MDB_fullstackRoleSkillsData')]",
-				"[concat(variables('factoryId'), '/datasets/MongoToBlobJson')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_DB_fullStackRoleSkills')]"
+				"[concat(variables('factoryId'), '/datasets/ABS_fullStackUser')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_DB_UserTable')]",
+				"[concat(variables('factoryId'), '/datasets/ABS_fullstackRoleSkills')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_DB_fullStackRoleSkills')]",
+				"[concat(variables('factoryId'), '/dataflows/DF_fullStack')]"
 			]
 		}
 	]
