@@ -1,0 +1,23 @@
+{
+	"name": "ABS_DataEng_productItemCSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ABS_fullStackProject",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "ProductItem.csv",
+				"container": "data-eng-input"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

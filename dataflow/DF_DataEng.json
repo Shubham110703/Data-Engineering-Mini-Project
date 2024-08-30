@@ -1,0 +1,89 @@
+{
+	"name": "DF_DataEng",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ABS_DataEng_productCSV",
+						"type": "DatasetReference"
+					},
+					"name": "MisumiProductDetail"
+				},
+				{
+					"dataset": {
+						"referenceName": "ABS_DataEng_productItemCSV",
+						"type": "DatasetReference"
+					},
+					"name": "ProductItem"
+				}
+			],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "select3"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Main Product Category} as string,",
+				"          {Sub Category} as string,",
+				"          {Sub-Sub Category} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> MisumiProductDetail",
+				"source(output(",
+				"          {Category Name} as string,",
+				"          {Category Code} as string,",
+				"          {Series Name} as string,",
+				"          {Brand Name} as string,",
+				"          {Min Days To Ship} as short,",
+				"          {Max Days To Ship} as short,",
+				"          Description as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ProductItem",
+				"MisumiProductDetail select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"ProductItem select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select1 derive({Main Product Category} = iifNull({Main Product Category}, \"NA\"),",
+				"          {Sub Category} = iifNull({Sub Category}, \"NA\"),",
+				"          {Sub-Sub Category} = iifNull({Sub-Sub Category}, \"NA\")) ~> derivedColumn1",
+				"derivedColumn1 filter({Sub Category} != \"NA\" && {Sub-Sub Category} != \"NA\" ) ~> filter1",
+				"select2 derive(Description = regexReplace(Description, '[^a-zA-Z0-9 ]', '')) ~> derivedColumn2",
+				"derivedColumn2 select(mapColumn(",
+				"          Description",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}
