@@ -19,11 +19,7 @@
 					"name": "ProductItem"
 				}
 			],
-			"sinks": [
-				{
-					"name": "sink1"
-				}
-			],
+			"sinks": [],
 			"transformations": [
 				{
 					"name": "select1"
@@ -72,17 +68,13 @@
 				"select1 derive({Main Product Category} = iifNull({Main Product Category}, \"NA\"),",
 				"          {Sub Category} = iifNull({Sub Category}, \"NA\"),",
 				"          {Sub-Sub Category} = iifNull({Sub-Sub Category}, \"NA\")) ~> derivedColumn1",
-				"derivedColumn1 filter({Sub Category} != \"NA\" && {Sub-Sub Category} != \"NA\" ) ~> filter1",
+				"derivedColumn1 filter({Sub Category} != \"NA\" && {Sub-Sub Category} != \"NA\") ~> filter1",
 				"select2 derive(Description = regexReplace(Description, '[^a-zA-Z0-9 ]', '')) ~> derivedColumn2",
 				"derivedColumn2 select(mapColumn(",
 				"          Description",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select3",
-				"filter1 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true) ~> select3"
 			]
 		}
 	}
