@@ -1,0 +1,16 @@
+{
+	"name": "SQL_DB_finalProdTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DB_fullstackproject",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "Final",
+			"table": "Product"
+		}
+	}
+}

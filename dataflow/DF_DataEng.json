@@ -17,9 +17,45 @@
 						"type": "DatasetReference"
 					},
 					"name": "ProductItem"
+				},
+				{
+					"dataset": {
+						"referenceName": "SQL_DB_ProductDetail",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "SQL_DB_ProductItem",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SQL_DB_ProductDetail",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "SQL_DB_ProductItem",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				},
+				{
+					"dataset": {
+						"referenceName": "SQL_DB_finalProdTable",
+						"type": "DatasetReference"
+					},
+					"name": "sink3"
+				}
+			],
 			"transformations": [
 				{
 					"name": "select1"
@@ -37,7 +73,16 @@
 					"name": "derivedColumn2"
 				},
 				{
+					"name": "join1"
+				},
+				{
 					"name": "select3"
+				},
+				{
+					"name": "derivedColumn4"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -61,6 +106,28 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> ProductItem",
+				"source(output(",
+				"          {Main Product Category} as string,",
+				"          {Sub Category} as string,",
+				"          {Sub-Sub Category} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source2",
+				"source(output(",
+				"          {Category Name} as string,",
+				"          {Category Code} as string,",
+				"          {Series Name} as string,",
+				"          {Brand Name} as string,",
+				"          {Min Days To Ship} as short,",
+				"          {Max Days To Ship} as short,",
+				"          Description as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
 				"MisumiProductDetail select(skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"ProductItem select(skipDuplicateMapInputs: true,",
@@ -69,12 +136,72 @@
 				"          {Sub Category} = iifNull({Sub Category}, \"NA\"),",
 				"          {Sub-Sub Category} = iifNull({Sub-Sub Category}, \"NA\")) ~> derivedColumn1",
 				"derivedColumn1 filter({Sub Category} != \"NA\" && {Sub-Sub Category} != \"NA\") ~> filter1",
-				"select2 derive(Description = regexReplace(Description, '[^a-zA-Z0-9 ]', '')) ~> derivedColumn2",
-				"derivedColumn2 select(mapColumn(",
-				"          Description",
+				"select2 derive(Description = regexReplace(regexReplace(Description, '<[^>]+>', ''), '[€¢]', '')\r",
+				",",
+				"          {Category Name} = iifNull({Category Name}, \"NA\"),",
+				"          {Category Code} = iifNull({Category Code}, \"NA\"),",
+				"          {Series Name} = iifNull({Series Name}, \"NA\"),",
+				"          {Brand Name} = iifNull({Brand Name}, \"NA\")) ~> derivedColumn2",
+				"source2, source1 join({Sub-Sub Category} == {Category Name},",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"derivedColumn4 select(mapColumn(",
+				"          {Main Product Category},",
+				"          {Sub Category},",
+				"          {Category Name},",
+				"          BrandName = {Brand Name},",
+				"          {Series Name},",
+				"          Description,",
+				"          AverageDaysToShip",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select3"
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"join1 derive(AverageDaysToShip = ({Min Days To Ship}+{Max Days To Ship})/2,",
+				"          {Category Name} = iifNull({Category Name}, \"NA\"),",
+				"          {Sub Category} = iifNull({Sub Category}, \"NA\"),",
+				"          {Series Name} = iifNull({Series Name}, \"NA\"),",
+				"          {Brand Name} = iifNull({Brand Name}, \"NA\"),",
+				"          Description = iifNull({Description}, \"NA\")) ~> derivedColumn4",
+				"select3 aggregate(groupBy({Main Product Category},",
+				"          {Sub Category},",
+				"          {Category Name},",
+				"          BrandName,",
+				"          {Series Name},",
+				"          Description,",
+				"          AverageDaysToShip),",
+				"     Count = count({Main Product Category})) ~> aggregate1",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink2",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink3"
 			]
 		}
 	}

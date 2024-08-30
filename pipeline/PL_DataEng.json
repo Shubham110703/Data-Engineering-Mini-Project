@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "PL_DataEng",
 	"properties": {
 		"activities": [
 			{
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DF_fullStack",
+						"referenceName": "DF_DataEng",
 						"type": "DataFlowReference"
 					},
 					"compute": {
